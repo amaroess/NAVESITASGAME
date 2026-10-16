@@ -26,7 +26,7 @@ public final class GestorAudio implements Disposable {
 
     public void cargar() {
         if (cargado) return;
-        musica = Gdx.audio.newMusic(Gdx.files.internal("piano-loops.wav"));
+        musica = Gdx.audio.newMusic(Gdx.files.internal("musicabatalla.mp3"));
         disparo = Gdx.audio.newSound(Gdx.files.internal("pop-sound.mp3"));
         golpe = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
         explosion = Gdx.audio.newSound(Gdx.files.internal("explosion.ogg"));
