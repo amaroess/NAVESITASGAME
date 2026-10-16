@@ -2,79 +2,39 @@ package puppy.code;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.graphics.Color;
+import puppy.code.audio.GestorAudio;
 
+public final class PantallaGameOver extends PantallaBase {
+    private final int puntaje;
+    private final int ronda;
 
-public class PantallaGameOver implements Screen {
+    public PantallaGameOver(SpaceNavigation game, int puntaje, int ronda) {
+        super(game);
+        this.puntaje = puntaje;
+        this.ronda = ronda;
+    }
 
-	private SpaceNavigation game;
-	private OrthographicCamera camera;
+    @Override
+    public void show() { GestorAudio.getInstancia().pausarMusica(); }
 
-	public PantallaGameOver(SpaceNavigation game) {
-		this.game = game;
-        
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 1200, 800);
-	}
-
-	@Override
-	public void render(float delta) {
-		ScreenUtils.clear(0, 0, 0.2f, 1);
-
-		camera.update();
-		game.getBatch().setProjectionMatrix(camera.combined);
-
-		game.getBatch().begin();
-		game.getFont().draw(game.getBatch(), "Game Over !!! ", 120, 400,400,1,true);
-		game.getFont().draw(game.getBatch(), "Pincha en cualquier lado para reiniciar ...", 100, 300);
-	
-		game.getBatch().end();
-
-		if (Gdx.input.isTouched() || Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
-			Screen ss = new PantallaJuego(game,1,3,0,1,1,10);
-			ss.resize(1200, 800);
-			game.setScreen(ss);
-			dispose();
-		}
-	}
- 
-	
-	@Override
-	public void show() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void pause() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void resume() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
-	}
-   
+    @Override
+    public void render(float delta) {
+        gestionarAudio();
+        dibujarFondo(delta);
+        batch.begin();
+        textoCentrado("GAME OVER", 570, 3.5f, Color.SCARLET);
+        textoCentrado("PUNTAJE: " + puntaje + "     OLEADA: " + ronda, 460, 1.8f, Color.WHITE);
+        textoCentrado("RECORD: " + game.getHighScore(), 390, 1.5f, Color.YELLOW);
+        textoCentrado("ENTER / ESPACIO / R o clic: volver a jugar", 280, 1.3f, Color.CYAN);
+        textoCentrado("ESC: menu principal", 225, 1.2f, Color.LIGHT_GRAY);
+        batch.end();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.cambiarPantalla(new PantallaMenu(game));
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
+            || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
+            || Gdx.input.isKeyJustPressed(Input.Keys.R) || Gdx.input.justTouched()) {
+            game.cambiarPantalla(new PantallaJuego(game));
+        }
+    }
 }

@@ -110,6 +110,16 @@ tasks.register('dist') {
   dependsOn 'jar'
 }
 
+// Verifica el renderizado y las transiciones sin abrir una ventana visible.
+tasks.register('smokeTest', JavaExec) {
+  dependsOn testClasses
+  classpath = sourceSets.test.runtimeClasspath
+  mainClass = 'puppy.code.DesktopSmoke'
+  workingDir = rootProject.file('assets')
+  systemProperty 'smoke.output', layout.buildDirectory.dir('smoke').get().asFile.absolutePath
+  if (os.contains('mac')) jvmArgs += '-XstartOnFirstThread'
+}
+
 distributions {
   main {
     contents {

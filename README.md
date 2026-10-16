@@ -1,33 +1,87 @@
-# SpaceNav2024
+# Space Navigation
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+Juego de naves en Java y libGDX, organizado en un modulo de logica (`core`) y un lanzador de escritorio (`lwjgl3`).
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+## Ejecutar
 
-## Platforms
+Usar JDK 17. Desde la carpeta del proyecto:
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
+PowerShell:
 
-## Gradle
+```powershell
+.\gradlew.bat lwjgl3:run
+```
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+Git Bash:
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+```bash
+./gradlew lwjgl3:run
+```
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+La primera ejecucion descarga las dependencias con el wrapper de Gradle incluido.
+
+## Controles
+
+| Accion | Control |
+| --- | --- |
+| Mover | Flechas o WASD |
+| Disparar | Mantener Espacio |
+| Pausar / continuar | P |
+| Activar / desactivar sonido | M |
+| Volver al menu | Esc |
+| Iniciar / reiniciar | Enter, Espacio o clic |
+
+## Partida
+
+- Comienza con 3 vidas; se pueden recuperar hasta 5.
+- Hay asteroides que rebotan y naves enemigas que descienden en zigzag y disparan.
+- Cada tres oleadas aparece un jefe con rafagas y mas resistencia.
+- Al completar una oleada se conservan nave, vidas, arma y escudo.
+- Los enemigos pueden soltar mejoras: **+** vida, **E** escudo de 6 segundos, **D** disparo doble y **A** abanico.
+- La segunda baja siempre ofrece un disparo doble; las mejoras posteriores son aleatorias.
+- El record y la preferencia de sonido se guardan entre sesiones.
+- Asteroide: 10 puntos. Nave enemiga: 35 puntos. Jefe: 500 puntos.
+
+## Organizacion del codigo
+
+`Partida` coordina las reglas y las colisiones sin depender de texturas, ventanas ni audio.
+`PantallaJuego` interpreta los controles y dibuja el modelo con un paso de simulacion fijo.
+Las entidades utilizan segundos para sus movimientos y temporizadores. Las pantallas comparten
+un mundo virtual con `FitViewport`, recursos graficos y audio administrados durante la vida de la aplicacion.
+
+| Requisito | Implementacion |
+| --- | --- |
+| Clase abstracta e interfaz | `Amenaza` / `Entidad` y `Danable` / `EstrategiaDisparo` |
+| Encapsulamiento | Estado privado, acciones de dominio y colecciones de solo lectura en `Partida` |
+| Singleton | [GestorAudio](core/src/main/java/puppy/code/audio/GestorAudio.java) |
+| Strategy | [EstrategiaDisparo](core/src/main/java/puppy/code/armas/EstrategiaDisparo.java), implementada por disparos simple, doble y abanico |
+| Template Method | [Amenaza.actualizar](core/src/main/java/puppy/code/enemigos/Amenaza.java), especializado por asteroide, nave enemiga y jefe |
+| Builder | [ConfiguracionOleada.Builder](core/src/main/java/puppy/code/modelo/ConfiguracionOleada.java) |
+
+Las texturas se cargan una vez mediante `RecursosJuego` y se liberan al cerrar el juego.
+`GestorAudio` es el unico propietario de la musica y los efectos.
+
+## Verificacion
+
+Pruebas de reglas, movimiento, armas, danio, colisiones y progresion:
+
+```bash
+./gradlew core:test
+```
+
+Prueba grafica opcional en una ventana oculta (requiere OpenGL):
+
+```bash
+./gradlew lwjgl3:smokeTest
+```
+
+Guarda capturas de menu, partida, pausa y Game Over en `lwjgl3/build/smoke/`.
+Usa audio desactivado y preferencias aisladas de las partidas reales.
+
+Generar un JAR con sus dependencias y recursos:
+
+```bash
+./gradlew lwjgl3:jar
+```
+
+El archivo se genera en `lwjgl3/build/libs/SpaceNav2024-1.0.0.jar`.
