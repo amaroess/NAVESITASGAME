@@ -10,12 +10,12 @@ buildscript {
   }
 }
 plugins {
-  id "io.github.fourlastor.construo" version "1.4.1"
+  // id "io.github.fourlastor.construo" version "1.4.1"
   id "application"
 }
 
 
-import io.github.fourlastor.construo.Target
+// import io.github.fourlastor.construo.Target
 
 sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
 mainClassName = 'puppy.code.lwjgl3.Lwjgl3Launcher'
@@ -69,7 +69,7 @@ jar {
   }
 }
 
-construo {
+/*construo {
     // name of the executable
     name.set(appName)
     // human-readable name, used for example in the `.app` name for macOS
@@ -103,7 +103,7 @@ construo {
         jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.12%2B7/OpenJDK17U-jdk_x64_windows_hotspot_17.0.12_7.zip")
       }
     }
-}
+}*/
 
 // Equivalent to the jar task; here for compatibility with gdx-setup.
 tasks.register('dist') {
