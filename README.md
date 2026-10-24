@@ -4,7 +4,7 @@ Juego de naves en Java y libGDX, organizado en un modulo de logica (`core`) y un
 
 ## Ejecutar
 
-Usar JDK 17. Desde la carpeta del proyecto:
+Usar JDK 11. Desde la carpeta del proyecto:
 
 PowerShell:
 
